@@ -11,7 +11,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-//public class NoteService implements INoteService {
 public class NoteService {
     private final INoteRepository noteRepository;
 
