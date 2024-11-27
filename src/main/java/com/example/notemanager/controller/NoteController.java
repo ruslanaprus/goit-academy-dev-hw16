@@ -53,4 +53,15 @@ public class NoteController {
         noteService.update(note);
         return new ModelAndView("redirect:/note/list");
     }
+
+    @GetMapping("/create")
+    public ModelAndView create() {
+        return new ModelAndView("note/create");
+    }
+
+    @PostMapping("/create")
+    public ModelAndView create(@ModelAttribute Note note) {
+        noteService.create(note);
+        return new ModelAndView("redirect:/note/list");
+    }
 }
