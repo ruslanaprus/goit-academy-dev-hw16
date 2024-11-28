@@ -112,4 +112,36 @@ class NoteControllerTest {
 
         verify(noteService, never()).delete(anyLong());
     }
+
+    @Test
+    void createFormReturnsCreateView() throws Exception {
+        mockMvc.perform(get("/note/create"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("note/create"));
+    }
+
+    @Test
+    void createNewNoteRedirectsToList() throws Exception {
+        Note newNote = Note.builder().title("new title").content("new content").build();
+
+        when(noteService.create(any(Note.class))).thenReturn(newNote);
+
+        mockMvc.perform(post("/note/create")
+                        .flashAttr("note", newNote))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/note/list"));
+
+        verify(noteService, times(1)).create(any(Note.class));
+    }
+
+//    @Test
+//    void createNewNoteFailsWithoutTitleOrContent() throws Exception {
+//        Note incompleteNote = Note.builder().content("Content without title").build();
+//
+//        mockMvc.perform(post("/note/create")
+//                        .flashAttr("note", incompleteNote))
+//                .andExpect(status().is4xxClientError());
+//
+//        verify(noteService, never()).create(any(Note.class));
+//    }
 }

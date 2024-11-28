@@ -1,10 +1,13 @@
 package com.example.notemanager.controller;
 
 import com.example.notemanager.exception.ExceptionMessages;
+import com.example.notemanager.exception.NoteServiceException;
 import com.example.notemanager.model.Note;
 import com.example.notemanager.service.NoteService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,7 +52,10 @@ public class NoteController {
     }
 
     @PostMapping("/edit")
-    public ModelAndView editById(@ModelAttribute Note note) {
+    public ModelAndView editById(@Valid @ModelAttribute Note note, BindingResult result) {
+        if(result.hasErrors()) {
+            throw new NoteServiceException(ExceptionMessages.INVALID_NOTE_DATA.getMessage());
+        }
         noteService.update(note);
         return new ModelAndView("redirect:/note/list");
     }
@@ -60,7 +66,10 @@ public class NoteController {
     }
 
     @PostMapping("/create")
-    public ModelAndView create(@ModelAttribute Note note) {
+    public ModelAndView create(@Valid @ModelAttribute Note note, BindingResult result) {
+        if(result.hasErrors()) {
+            throw new NoteServiceException(ExceptionMessages.INVALID_NOTE_DATA.getMessage());
+        }
         noteService.create(note);
         return new ModelAndView("redirect:/note/list");
     }
