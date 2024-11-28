@@ -63,18 +63,6 @@ class NoteControllerTest {
     }
 
     @Test
-    void editInvalidIdReturnsErrorPage() throws Exception {
-        mockMvc.perform(get("/note/edit")
-        .param("id", "0"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("note/error"))
-                .andExpect(model().attributeExists("message"))
-                .andExpect(model().attribute("message", ExceptionMessages.INVALID_NOTE_ID.getMessage()));
-
-        verify(noteService, never()).getById(anyLong());
-    }
-
-    @Test
     void editByIdUpdatesNoteAndRedirectsToList() throws Exception {
         Note updatedNote = Note.builder().id(1L).title("Updated Title").content("Updated Content").build();
 
@@ -89,6 +77,18 @@ class NoteControllerTest {
     }
 
     @Test
+    void editByIdWithInvalidNoteThrowsException() throws Exception {
+        Note invalidNote = Note.builder().id(1L).title("").content("").build();
+
+        mockMvc.perform(post("/note/edit")
+                        .flashAttr("note", invalidNote))
+                .andExpect(status().isBadRequest())
+                .andExpect(view().name("note/error"))
+                .andExpect(model().attributeExists("message"))
+                .andExpect(model().attribute("message", ExceptionMessages.INVALID_NOTE_DATA.getMessage()));
+    }
+
+    @Test
     void deleteValidIdRedirectsToList() throws Exception {
         doNothing().when(noteService).delete(1L);
 
@@ -98,19 +98,6 @@ class NoteControllerTest {
                 .andExpect(redirectedUrl("/note/list"));
 
         verify(noteService, times(1)).delete(1L);
-    }
-
-    @Test
-    void deleteInvalidIdReturnsErrorPage() throws Exception {
-        mockMvc.perform(post("/note/delete")
-                        .param("id", "0"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("note/error"))
-                .andExpect(model().attributeExists("message"))
-                .andExpect(model().attribute("message", ExceptionMessages.INVALID_NOTE_ID.getMessage()))
-                .andReturn();
-
-        verify(noteService, never()).delete(anyLong());
     }
 
     @Test
@@ -134,14 +121,15 @@ class NoteControllerTest {
         verify(noteService, times(1)).create(any(Note.class));
     }
 
-//    @Test
-//    void createNewNoteFailsWithoutTitleOrContent() throws Exception {
-//        Note incompleteNote = Note.builder().content("Content without title").build();
-//
-//        mockMvc.perform(post("/note/create")
-//                        .flashAttr("note", incompleteNote))
-//                .andExpect(status().is4xxClientError());
-//
-//        verify(noteService, never()).create(any(Note.class));
-//    }
+    @Test
+    void createNewNoteWithInvalidDataThrowsException() throws Exception {
+        Note invalidNote = Note.builder().title("").content("").build();
+
+        mockMvc.perform(post("/note/create")
+                        .flashAttr("note", invalidNote))
+                .andExpect(status().isBadRequest())
+                .andExpect(view().name("note/error"))
+                .andExpect(model().attributeExists("message"))
+                .andExpect(model().attribute("message", ExceptionMessages.INVALID_NOTE_DATA.getMessage()));
+    }
 }

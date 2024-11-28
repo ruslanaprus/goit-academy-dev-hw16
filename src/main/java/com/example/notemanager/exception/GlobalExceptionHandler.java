@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleException(Throwable exception, Model model) {
         log.error("Unexpected error occurred: {}", exception.getMessage(), exception);
-        model.addAttribute("message", "Internal Server Error: " + exception.getMessage());
+        model.addAttribute("message", "Internal Server Error");
         return "note/error";
     }
 

@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,8 +33,10 @@ public class Note {
     private Long id;
     @Column(name = "title")
     @NotNull(message = "Title must not be null")
+    @NotEmpty(message = "Title must not be empty")
     private String title;
     @Column(name = "content")
     @NotNull(message = "Content must not be null")
+    @NotEmpty(message = "Content must not be empty")
     private String content;
 }
