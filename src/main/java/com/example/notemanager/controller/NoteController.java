@@ -19,6 +19,8 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/note")
 @RequiredArgsConstructor
 public class NoteController {
+    private static final String REDIRECT_NOTE_LIST = "redirect:/note/list";
+
     private final NoteService noteService;
 
     @GetMapping("/list")
@@ -30,22 +32,12 @@ public class NoteController {
 
     @PostMapping("/delete")
     public ModelAndView delete(@RequestParam("id") Long id) {
-        if (id == null || id <= 0) {
-            ModelAndView errorPage = new ModelAndView("note/error");
-            errorPage.addObject("message", ExceptionMessages.INVALID_NOTE_ID.getMessage());
-            return errorPage;
-        }
         noteService.delete(id);
-        return new ModelAndView("redirect:/note/list");
+        return new ModelAndView(REDIRECT_NOTE_LIST);
     }
 
     @GetMapping("/edit")
     public ModelAndView edit(@RequestParam Long id) {
-        if (id == null || id <= 0) {
-            ModelAndView errorPage = new ModelAndView("note/error");
-            errorPage.addObject("message", ExceptionMessages.INVALID_NOTE_ID.getMessage());
-            return errorPage;
-        }
         ModelAndView editNote = new ModelAndView("note/edit");
         editNote.addObject("note", noteService.getById(id));
         return editNote;
@@ -57,7 +49,7 @@ public class NoteController {
             throw new NoteServiceException(ExceptionMessages.INVALID_NOTE_DATA.getMessage());
         }
         noteService.update(note);
-        return new ModelAndView("redirect:/note/list");
+        return new ModelAndView(REDIRECT_NOTE_LIST);
     }
 
     @GetMapping("/create")
@@ -71,6 +63,6 @@ public class NoteController {
             throw new NoteServiceException(ExceptionMessages.INVALID_NOTE_DATA.getMessage());
         }
         noteService.create(note);
-        return new ModelAndView("redirect:/note/list");
+        return new ModelAndView(REDIRECT_NOTE_LIST);
     }
 }
