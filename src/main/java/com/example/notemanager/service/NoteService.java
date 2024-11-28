@@ -5,17 +5,17 @@ import com.example.notemanager.exception.NoteServiceException;
 import com.example.notemanager.model.Note;
 import com.example.notemanager.repository.INoteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class NoteService {
     private final INoteRepository noteRepository;
 
-    public List<Note> listAll() {
-        return noteRepository.findAll();
+    public Page<Note> listAll(PageRequest pageRequest) {
+        return noteRepository.findAll(pageRequest);
     }
 
     public Note getById(long id) {

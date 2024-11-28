@@ -6,6 +6,8 @@ import com.example.notemanager.model.Note;
 import com.example.notemanager.service.NoteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,10 +26,18 @@ public class NoteController {
     private final NoteService noteService;
 
     @GetMapping("/list")
-    public ModelAndView listAll() {
-        ModelAndView allNotes = new ModelAndView("note/list");
-        allNotes.addObject("notes", noteService.listAll());
-        return allNotes;
+    public ModelAndView listAll(@RequestParam(defaultValue = "0") int page,
+                                @RequestParam(defaultValue = "5") int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Note> notePage = noteService.listAll(pageRequest);
+
+        ModelAndView modelAndView = new ModelAndView("note/list");
+        modelAndView.addObject("notes", notePage.getContent());
+        modelAndView.addObject("currentPage", notePage.getNumber());
+        modelAndView.addObject("totalPages", notePage.getTotalPages());
+        modelAndView.addObject("totalItems", notePage.getTotalElements());
+        modelAndView.addObject("size", size);
+        return modelAndView;
     }
 
     @PostMapping("/delete")
