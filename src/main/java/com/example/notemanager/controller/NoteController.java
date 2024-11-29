@@ -27,7 +27,7 @@ public class NoteController {
 
     @GetMapping("/list")
     public ModelAndView listAll(@RequestParam(defaultValue = "0") int page,
-                                @RequestParam(defaultValue = "5") int size) {
+                                @RequestParam(defaultValue = "10") int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Note> notePage = noteService.listAll(pageRequest);
 
