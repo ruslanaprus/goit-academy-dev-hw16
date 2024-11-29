@@ -7,4 +7,14 @@ INSERT INTO notes (title, content) VALUES
     ('Garden Adventure', 'Escaped to the garden and climbed the tallest tree. Felt like a jungle cat!'),
     ('Evening Zoomies', 'Ran in circles around the house at full speed. Humans looked confused.'),
     ('Cuddles', 'Snuggled up with the human on the sofa. Purring level: maximum.'),
-    ('Midnight Mischief', 'Knocked over a vase during a midnight exploration of the kitchen counters.');
+    ('Midnight Mischief', 'Knocked over a vase during a midnight exploration of the kitchen counters.'),
+    ('Feather Toy Frenzy', 'Spent an hour trying to catch the feather toy. Almost got it!'),
+    ('Window Birdwatching', 'Saw a blue jay today. New bird friend? Still not sure.'),
+    ('The Great Escape', 'Attempted to slip through the door. Foiled by quick human reflexes.'),
+    ('Midday Meditation', 'Sat perfectly still for 15 minutes, staring at the wall. Deep thoughts.'),
+    ('Laundry Basket Hideout', 'Discovered the laundry basket makes an excellent hiding spot. Cozy!'),
+    ('Curtain Climbing', 'Tried climbing the curtains. Got stuck halfway. Called for backup.'),
+    ('The Mysterious Shadow', 'Chased a mysterious shadow across the room. It disappeared!'),
+    ('Cardboard Castle', 'Found an empty box and claimed it as my new castle. Defended it fiercely.'),
+    ('Snack Time Sabotage', 'Knocked over the treat jar. Humans were not amused.'),
+    ('The Bath Incident', 'Accidentally fell into the bathtub. A soggy but enlightening experience.');

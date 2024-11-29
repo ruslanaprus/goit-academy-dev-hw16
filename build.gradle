@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.5'
@@ -43,10 +45,26 @@ dependencies {
 	implementation 'ch.qos.logback:logback-classic:1.5.7'
 }
 
+// Load .env file
+def loadEnvProperties() {
+	def envFile = file('.env')
+	if (!envFile.exists()) {
+		throw new GradleException(".env file not found in project root directory")
+	}
+
+	def props = new Properties()
+	envFile.withInputStream { stream ->
+		props.load(stream)
+	}
+	return props
+}
+
+// Set Flyway properties using .env values
+def envProps = loadEnvProperties()
 flyway {
-	url = System.getenv("GOIT_DB2_URL")
-	user = System.getenv("GOIT_DB_USER")
-	password = System.getenv("GOIT_DB_PASS")
+	url = envProps.getProperty('GOIT_DB2_URL')
+	user = envProps.getProperty('GOIT_DB_USER')
+	password = envProps.getProperty('GOIT_DB_PASS')
 	locations = ['filesystem:src/main/resources/db/migration']
 	cleanDisabled = false
 }

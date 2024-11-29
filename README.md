@@ -3,8 +3,11 @@
 A Spring Boot application designed to help with **notes management**. This project is a setup for a fully-featured notes management application, offering core functionalities like creating, reading, updating, and deleting notes.
 The purpose of this application is to provide a backend service for managing notes, which can be further developed into a comprehensive note management system with persistence, authentication, and additional features.
 
-This project is an enhanced version of the [Note Manager](https://github.com/ruslanaprus/goit-academy-dev-hw15), and it has an improved architecture for better maintainability and scalability. The `INoteService` interface is used to make the service layer more testable and extendable.
-Similarly, the introduction of the `INoteRepository` interface ensures flexibility in switching between different data storage solutions, such as in-memory or database options.
+This project is an enhanced version of the [Note Manager](https://github.com/ruslanaprus/goit-academy-dev-hw15), and it has an improved architecture for better maintainability and scalability. 
+The `INoteRepository` now extends `JpaRepository`, enabling the use of Spring Data's CRUD and query functionalities.
+PostgreSQL has been integrated as the primary database, with Flyway migrations managing schema creation and data population. 
+User input validation has been added to ensure data integrity and prevent invalid entries. 
+Additionally, pagination has been implemented in the UI to facilitate the efficient display of large note collections.
 
 ---
 
@@ -58,23 +61,18 @@ Similarly, the introduction of the `INoteRepository` interface ensures flexibili
 git clone git@github.com:ruslanaprus/goit-academy-dev-hw16.git
 cd goit-academy-dev-hw16
 ```
-2. Database Configuration: Copy the .env.example file into .env, and populate it with your DB details (you might need to change the GOIT_DB2_URL if yours is different).
+2. Database Configuration: Copy the `.env.example` file into `.env`, and populate it with your DB details (keys: [GOIT_DB2_URL, GOIT_DB_USER, GOIT_DB_PASS]). This file will be used to set DB properties for Flyway plugin in `build.gradle` and for your application.
 
 
-3. You will also need to copy your database credentials into either:
-   - Your environment variables on your computer (keys: [GOIT_DB2_URL, GOIT_DB_USER, GOIT_DB_PASS])
-   - The build.gradle file in the flyway section
-
-
-4. Run Flyway Migration: To apply database migrations, run:
+3. Run Flyway Migration: To apply database migrations, run:
 ```shell
 gradle flywayMigrate
 ```
-5. Build the project:
+4. Build the project:
 ```shell
 ./gradlew clean build
 ```
-6. Run the application:
+5. Run the application:
 ```shell
 ./gradlew bootRun
 ```
