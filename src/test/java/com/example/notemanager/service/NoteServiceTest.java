@@ -6,6 +6,9 @@ import com.example.notemanager.model.Note;
 import com.example.notemanager.repository.INoteRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,12 +28,15 @@ class NoteServiceTest {
 
     @Test
     void listAllReturnsEmptyListWhenNoNotesExist() {
-        when(noteRepository.findAll()).thenReturn(List.of());
+        PageRequest pageRequest = PageRequest.of(0, 5);
+        Page<Note> emptyPage = Page.empty(pageRequest);
 
-        List<Note> notes = noteService.listAll();
+        when(noteRepository.findAll(pageRequest)).thenReturn(emptyPage);
 
-        assertNotNull(notes);
-        assertTrue(notes.isEmpty(), "Expected no notes");
+        Page<Note> result = noteService.listAll(pageRequest);
+
+        assertNotNull(result, "Result should not be null.");
+        assertTrue(result.isEmpty(), "Expected no notes in the page.");
     }
 
     @Test
@@ -39,15 +45,23 @@ class NoteServiceTest {
         Note note2 = Note.builder().id(2L).title("title 2").content("content 2").build();
         Note note3 = Note.builder().id(3L).title("title 3").content("content 3").build();
 
-        when(noteRepository.findAll()).thenReturn(List.of(note1, note2, note3));
+        int page = 0;
+        int size = 2;
+        PageRequest pageRequest = PageRequest.of(page, size);
+        // simulate behaviour of a Page: 2 notes on the page, pagination parameters, 3 - total number of items
+        Page<Note> notePage = new PageImpl<>(List.of(note1, note2), pageRequest, 3);
 
-        List<Note> result = noteService.listAll();
+        when(noteRepository.findAll(pageRequest)).thenReturn(notePage);
 
-        assertNotNull(result);
-        assertEquals(3, result.size(), "The list should contain all notes.");
-        assertTrue(result.contains(note1), "The list should contain note1.");
-        assertTrue(result.contains(note2), "The list should contain note2.");
-        assertTrue(result.contains(note3), "The list should contain note3.");
+        Page<Note> result = noteService.listAll(pageRequest);
+
+        assertNotNull(result, "Result should not be null.");
+        assertEquals(2, result.getContent().size(), "The page should contain the correct number of notes.");
+        assertTrue(result.getContent().contains(note1), "The page should contain note1.");
+        assertTrue(result.getContent().contains(note2), "The page should contain note2.");
+        assertEquals(3, result.getTotalElements(), "Total elements should match the expected count.");
+        assertEquals(2, result.getTotalPages(), "Total pages should match the expected count.");
+        assertEquals(page, result.getNumber(), "Current page number should match the requested page.");
     }
 
     @Test

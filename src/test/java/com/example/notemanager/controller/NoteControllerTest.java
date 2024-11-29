@@ -9,6 +9,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -38,13 +41,25 @@ class NoteControllerTest {
         Note note2 = Note.builder().id(2L).title("title 2").content("content 2").build();
         Note note3 = Note.builder().id(3L).title("title 3").content("content 3").build();
 
-        when(noteService.listAll()).thenReturn(List.of(note1, note2, note3));
+        int page = 0;
+        int size = 2;
+        PageRequest pageRequest = PageRequest.of(page, size);
+        // simulate behaviour of a Page: 2 notes on the page, pagination parameters, 3 - total number of items
+        Page<Note> notePage = new PageImpl<>(List.of(note1, note2), pageRequest, 3);
 
-        mockMvc.perform(get("/note/list"))
+        when(noteService.listAll(pageRequest)).thenReturn(notePage);
+
+        mockMvc.perform(get("/note/list")
+                        .param("page", String.valueOf(page))
+                        .param("size", String.valueOf(size)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("note/list"))
-                .andExpect(model().attributeExists("notes"))
-                .andExpect(model().attribute("notes", List.of(note1, note2, note3)));
+                .andExpect(model().attributeExists("notes", "currentPage", "totalPages", "totalItems", "size"))
+                .andExpect(model().attribute("notes", List.of(note1, note2)))
+                .andExpect(model().attribute("currentPage", page))
+                .andExpect(model().attribute("totalPages", 2))
+                .andExpect(model().attribute("totalItems", 3L))
+                .andExpect(model().attribute("size", size));
     }
 
     @Test
