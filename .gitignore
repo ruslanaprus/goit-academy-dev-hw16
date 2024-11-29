@@ -199,4 +199,7 @@ gradle-app.setting
 ### Gradle Patch ###
 # Java heap dump
 *.hprof
+
+# DB access details
+.env
 # End of https://www.toptal.com/developers/gitignore/api/java,gradle,intellij,macos
